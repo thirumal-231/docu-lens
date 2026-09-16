@@ -9,7 +9,7 @@ export const storeChunks = async (chunks, documentId) => {
     rows.push({
       document_id: documentId,
       content: chunk.pageContent,
-      page_number: chunk.pageNumber,
+      page_number: chunk.metadata.pageNumber,
       embedding,
     });
   }
