@@ -1,37 +1,37 @@
+// index.js
+import "dotenv/config.js";
 import express, { urlencoded } from "express";
 import { upload } from "./src/pdfupload.js";
-import { createDocument } from "./src/controllers/document.controller.js";
-import { ingestDocument } from "./src/ingestion.js";
-import { storeChunks } from "./src/controllers/chunks.controller.js";
+import { uploadDocument } from "./src/controllers/document.controller.js";
+import { clerkMiddleware } from "@clerk/express";
+import cors from "cors";
+import { userRouter } from "./src/routes/user.routes.js";
+import { globalErrorHandler } from "./src/controllers/error.controller.js";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
+app.post("/test", (req, res) => {
+  res.json({ message: "CORS Works!" });
+});
+
+app.use(clerkMiddleware());
 
 app.use(urlencoded({ extended: true }));
 app.use(express.json());
 
-app.post("/upload", upload.single(`doc`), async (req, res, next) => {
-  try {
-    const fileName = req.file.originalname;
-    const documentId = await createDocument(
-      fileName,
-      "597ee0dd-8f8b-4433-8d44-1010e538a7e5",
-    );
-    console.log("Doc ID: ", documentId);
+app.post("/upload", upload.single(`doc`), uploadDocument);
 
-    const chunks = await ingestDocument(fileName);
+app.use("/users", userRouter);
 
-    await storeChunks(chunks, documentId);
-
-    res.json({
-      message: "Document processed successfully",
-      documentId,
-      chunks: chunks.length,
-    });
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-});
+app.use(globalErrorHandler);
 
 app.listen(8000, () => {
   console.log(`Listening on: 8000`);

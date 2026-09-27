@@ -12,13 +12,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@clerk/express": "^2.1.72",
     "@langchain/community": "^1.1.29",
     "@langchain/core": "^1.2.11",
     "@langchain/google-genai": "^2.3.2",
     "@langchain/textsplitters": "^1.0.1",
     "@supabase/supabase-js": "^2.116.0",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "multer": "^2.4.0",
+    "ngrok": "^5.0.0-beta.2",
     "pdf-parse": "^2.4.5"
   }
 }

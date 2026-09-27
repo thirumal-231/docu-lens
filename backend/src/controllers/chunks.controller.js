@@ -1,6 +1,8 @@
 import { embeddings, supabaseClient } from "../embedding.js";
+import { AppError } from "../utils/AppError.js";
+import { catchAsync } from "../utils/catchAsync.js";
 
-export const storeChunks = async (chunks, documentId) => {
+export const storeChunks = catchAsync(async (chunks, documentId) => {
   const rows = [];
 
   for (const chunk of chunks) {
@@ -15,8 +17,7 @@ export const storeChunks = async (chunks, documentId) => {
   }
   const { data, error } = await supabaseClient.from("chunks").insert(rows);
   if (error) {
-    console.error("Supabase error", error);
-    throw error;
+    throw new AppError(`Supabase error: ${error.message}`, 500);
   }
   return data;
-};
+});
