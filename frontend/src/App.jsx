@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import { Show, UserButton } from "@clerk/react";
 import SignInPage from "./pages/SignInPage";
+import "./app.css";
 
 import { useAuth } from "@clerk/react";
 import { useEffect } from "react";
