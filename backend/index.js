@@ -7,6 +7,7 @@ import { clerkMiddleware } from "@clerk/express";
 import cors from "cors";
 import { userRouter } from "./src/routes/user.routes.js";
 import { globalErrorHandler } from "./src/controllers/error.controller.js";
+import { protect } from "./src/middlewares/protect.middleware.js";
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use(clerkMiddleware());
 app.use(urlencoded({ extended: true }));
 app.use(express.json());
 
-app.post("/upload", upload.single(`doc`), uploadDocument);
+app.post("/upload", protect, upload.single(`doc`), uploadDocument);
 
 app.use("/users", userRouter);
 

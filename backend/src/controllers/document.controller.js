@@ -1,5 +1,7 @@
 import { supabaseClient } from "../embedding.js";
+import { ingestDocument } from "../ingestion.js";
 import { catchAsync } from "../utils/catchAsync.js";
+import { storeChunks } from "./chunks.controller.js";
 
 export const createDocument = async (name, userid) => {
   const { data, error } = await supabaseClient
@@ -21,10 +23,14 @@ export const createDocument = async (name, userid) => {
 
 export const uploadDocument = catchAsync(async (req, res, next) => {
   const fileName = req.file.originalname;
-  const documentId = await createDocument(
-    fileName,
-    "597ee0dd-8f8b-4433-8d44-1010e538a7e5",
-  );
+  console.log(req.user);
+  const { data: fetchedUserData, error: fetchedUserDataError } =
+    await supabaseClient
+      .from("users")
+      .select()
+      .eq("clerk_user_id", req.user.id)
+      .single();
+  const documentId = await createDocument(fileName, fetchedUserData.user_id);
   console.log("Doc ID: ", documentId);
 
   const chunks = await ingestDocument(fileName);
