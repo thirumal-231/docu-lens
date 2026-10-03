@@ -36,7 +36,6 @@ const App = () => {
                 </Show>
                 <Show when="signed-in">
                   <HomePage />
-                  <UserButton />
                 </Show>
               </>
             }

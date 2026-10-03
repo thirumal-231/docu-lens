@@ -1,19 +1,20 @@
 "use client";
 
-import * as React from "react";
-
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarRail,
-  SidebarTrigger,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { useDocuments } from "@/hooks/useDocuments";
+import { useChatStore } from "@/store/store";
 import {
   GalleryVerticalEndIcon,
   AudioLinesIcon,
@@ -25,6 +26,7 @@ import {
   FrameIcon,
   PieChartIcon,
   MapIcon,
+  FileText,
 } from "lucide-react";
 
 // This is sample data.
@@ -158,16 +160,52 @@ const data = {
 };
 
 export function AppSidebar({ ...props }) {
+  const { data: userDocuments, isLoading, isError } = useDocuments();
+  const selectedDocumentId = useChatStore((state) => state.selectedDocumentId);
+  const setSelectedDocument = useChatStore(
+    (state) => state.setSelectedDocument,
+  );
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} user={props.user} />
       </SidebarHeader>
-      {/* <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Uploaded documents</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {isLoading ? (
+                <SidebarMenuItem>
+                  <p>Loading</p>
+                </SidebarMenuItem>
+              ) : (
+                userDocuments.map((userDocument) => (
+                  <SidebarMenuItem key={userDocument.document_id}>
+                    <SidebarMenuButton
+                      key={userDocument.document_id}
+                      isActive={selectedDocumentId === userDocument.document_id}
+                      onClick={() => {
+                        console.log(userDocument.name);
+                        setSelectedDocument(
+                          userDocument.document_id,
+                          userDocument.name,
+                        );
+                      }}
+                      tooltip={userDocument.name}
+                    >
+                      <FileText className="h-4 w-4" />
+                      <a>{userDocument.name}</a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))
+              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter> */}
       <SidebarRail />

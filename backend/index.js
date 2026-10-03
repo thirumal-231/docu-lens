@@ -8,12 +8,14 @@ import cors from "cors";
 import { userRouter } from "./src/routes/user.routes.js";
 import { globalErrorHandler } from "./src/controllers/error.controller.js";
 import { protect } from "./src/middlewares/protect.middleware.js";
+import { documentRouter } from "./src/routes/document.routes.js";
 
 const app = express();
 
 app.use(
   cors({
     origin: "http://localhost:5173",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
@@ -31,6 +33,7 @@ app.use(express.json());
 app.post("/upload", protect, upload.single(`doc`), uploadDocument);
 
 app.use("/users", userRouter);
+app.use("/documents", documentRouter);
 
 app.use(globalErrorHandler);
 

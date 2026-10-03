@@ -7,7 +7,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChevronsUpDownIcon } from "lucide-react";
 import { UserButton } from "@clerk/react";
 
 export function TeamSwitcher({ teams, user }) {

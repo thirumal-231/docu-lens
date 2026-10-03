@@ -43,3 +43,22 @@ export const uploadDocument = catchAsync(async (req, res, next) => {
     chunks: chunks.length,
   });
 });
+
+export const getAllDocuments = catchAsync(async (req, res, next) => {
+  const { data: fetchedUser } = await supabaseClient
+    .from("users")
+    .select()
+    .eq("clerk_user_id", req.user.id)
+    .select()
+    .single();
+
+  console.log(fetchedUser);
+  const { data, error } = await supabaseClient
+    .from("documents")
+    .select()
+    .eq("user_id", fetchedUser.user_id);
+  res.json({
+    message: "Documents fetched successfully",
+    data: data,
+  });
+});
